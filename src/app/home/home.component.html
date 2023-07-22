@@ -5,8 +5,8 @@
 
         <h2 class="title">All Courses</h2>
 
-        <button mat-mini-fab color="accent">
-            <mat-icon class="add-course-btn">add</mat-icon>
+        <button mat-mini-fab color="accent" routerLink="/create-course">
+            <mat-icon  class="add-course-btn">add</mat-icon>
         </button>
 
     </div>
@@ -14,11 +14,11 @@
     <mat-tab-group>
 
         <mat-tab label="Beginners">
-
+        <courses-card-list [courses]="beginnersCourses$ | async"  (courseEdited)="loadCourses()"></courses-card-list>
         </mat-tab>
 
         <mat-tab label="Advanced">
-
+            <courses-card-list [courses]="advancedCourses$ | async"  (courseEdited)="loadCourses()" ></courses-card-list>
         </mat-tab>
 
     </mat-tab-group>

@@ -4,8 +4,15 @@
 
 export const environment = {
   production: false,
+  useEmulators:true,
   firebase: {
-
+    apiKey: 'AIzaSyCE42aJs05BXypwNloa2f-VOqLVRfZq5oc',
+    authDomain: 'swift-habitat-384304.firebaseapp.com',
+    projectId: 'swift-habitat-384304',
+    storageBucket: 'swift-habitat-384304.appspot.com',
+    messagingSenderId: '797091519006',
+    appId: '1:797091519006:web:4a9c70fae8309032d76c0f',
+    measurementId: 'G-PE3W0L8YJP'
   },
   api: {
 

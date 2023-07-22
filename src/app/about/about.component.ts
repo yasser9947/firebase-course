@@ -41,6 +41,36 @@ export class AboutComponent {
     }
 
 
+    readOne() {
+        this.db.doc('/courses/2ScpNw86rFcCCYqDgvwu').get()
+            .subscribe(snap=>{
+
+                console.log(snap.data());
+            })
+    }
+
+
+    readColliction() {
+        this.db.collection('/courses',ref => ref.where("seqNo" ,"<",5).orderBy('seqNo')).get()
+            .subscribe(snap =>{
+                snap.forEach(ele =>{
+                    console.log(ele.data());
+                })
+            })
+    }
+
+
+
+    readGruopQueryColliction() {
+
+        this.db.collectionGroup("lessons" , query => query.where("seqNo","==",5)).get()
+            .subscribe(snap =>{
+
+                snap.forEach(ele =>{
+                    console.log(ele.data());
+                })
+            })
+    }
 }
 
 

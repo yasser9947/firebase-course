@@ -1,0 +1,7 @@
+firebase emulators:start --only firestore
+
+backup
+firebase emulators:export sample-courses
+
+import
+firebase emulators:start --import sample-courses
