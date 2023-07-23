@@ -5,6 +5,9 @@ import {Course} from "../model/course";
 import {query} from "@angular/animations";
 import {convertSnaps} from "./db-util";
 import {concatMap, map} from "rxjs/operators";
+import {Lesson} from "../model/lesson";
+import firebase from "firebase";
+import OrderByDirection = firebase.firestore.OrderByDirection;
 
 @Injectable({
   providedIn: 'root'
@@ -64,5 +67,56 @@ export class CourseService {
       return from(this.db.doc(`courses/${courseId}`).delete());
   }
 
+    deleteCourseAndLessons(courseId:string) {
+        return this.db.collection(`courses/${courseId}/lessons`)
+            .get()
+            .pipe(
+                concatMap(results => {
+
+                    const lessons = convertSnaps<Lesson>(results);
+
+                    const batch = this.db.firestore.batch();
+
+                    const courseRef = this.db.doc(`courses/${courseId}`).ref;
+
+                    batch.delete(courseRef);
+
+                    for (let lesson of lessons) {
+                        const lessonRef =
+                            this.db.doc(`courses/${courseId}/lessons/${lesson.id}`).ref;
+
+                        batch.delete(lessonRef);
+                    }
+
+                    return from(batch.commit());
+
+                })
+            );
+    }
+
+    findCourseByUrl(courseUrl: string):Observable<Course> | null {
+
+        return this.db.collection('courses' , query=>query.where("url" , "==" , courseUrl))
+            .get()
+            .pipe(
+                map(resulte =>{
+                    const courses = convertSnaps<Course>(resulte)
+                   return  courses.length == 1 ? courses[0] : null
+                })
+            )
+    }
+
+    findLessons(courseId:string, sortOrder: OrderByDirection = 'asc',
+                pageNumber = 0, pageSize = 3): Observable<Lesson[]> {
+        return this.db.collection(`courses/${courseId}/lessons`,
+            ref => ref.orderBy("seqNo",sortOrder)
+                .limit(pageSize)
+                .startAfter(pageNumber * pageSize)
+        )
+            .get()
+            .pipe(
+                map(results => convertSnaps<Lesson>(results))
+            )
+    }
 
 }
