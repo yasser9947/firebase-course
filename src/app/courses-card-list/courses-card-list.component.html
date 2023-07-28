@@ -18,17 +18,17 @@
       VIEW COURSE
     </button>
 
-    <ng-container>
-      <ng-container>
+
+      <ng-container  *ngIf="user.roles$ | async as roles">
         <button mat-button class="mat-raised-button mat-accent"
                 (click)="editCourse(course)">
           EDIT
         </button>
-        <button mat-mini-fab color="warn" (click)="onDeleteCourse(course.id)">
+        <button *ngIf="roles.admin" mat-mini-fab color="warn" (click)="onDeleteCourse(course.id)">
           <mat-icon>delete</mat-icon>
         </button>
       </ng-container>
-    </ng-container>
+
 
   </mat-card-actions>
 

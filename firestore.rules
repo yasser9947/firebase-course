@@ -1,25 +1,60 @@
 rules_version = '2';
 
 service cloud.firestore {
-  match /databases/{database}/documents {
-
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
 
 
-    match /{document=**} {
-      allow read: if true;
-      allow write: if false;
+    match /databases/{database}/documents {
+
+        function isAdmin(){
+            return isAuth() &&
+            'admin' in request.auth.token &&
+            request.auth.token.admin == true;
+        }
+
+
+        function isAuth() {
+            return request.auth.uid != null;
+        }
+
+        function isNonEmptyString(fieldName) {
+            return request.resource.data[fieldName] is string &&
+                   request.resource.data[fieldName].size() > 0;
+        }
+
+        function isValidCourse() {
+            return request.resource.data.seqNo is number &&
+                   request.resource.data.seqNo >= 0 &&
+                   isNonEmptyString("url");
+
+        }
+
+        function isKnownUser(){
+            return isAuth() &&
+                   exists(/databases/$(database)/documents/users/$(request.auth.uid));
+        }
+
+
+        match /courses/{courseId} {
+
+            allow read: if isKnownUser();
+            allow create,update: if isAdmin () && isValidCourse();
+
+            match /lessons/{lessonId} {
+                allow read;
+            }
+        }
+//        lesson collection group
+        match /{path=**}/lessons/{lessonId}{
+            allow read: if isKnownUser();
+        }
+
     }
-
-
-
-  }
 }
+
+// allow get;
+// allow list;
+
+// allow create;
+// allow update;
+// allow delete;
+// allow read: if request.auth.uid != null; => if authenticate
