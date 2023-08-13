@@ -10,7 +10,7 @@
     "e2e": "ng e2e",
     "firebase": "firebase",
     "local-dev": "firebase emulators:start --only firestore,auth,functions --import test-data",
-    "emulators": "firebase emulators:start --only firestore,auth --import test-data",
+    "emulators": "firebase emulators:start --only firestore,auth,storage --import test-data",
     "empty-emulator": "firebase emulators:start",
     "emulator": "firebase emulators:start --import test-data",
     "export": "firebase emulators:export test-data"

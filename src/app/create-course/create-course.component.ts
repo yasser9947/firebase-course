@@ -32,11 +32,14 @@ form = this.fb.group({
 })
 
   courseID:string;
+  percentageChanges$: Observable<number>;
+  iconUrl: any;
 
   constructor(private fb:FormBuilder,
               private courseService:CourseService,
               private afs:AngularFirestore,
-              private router:Router) {
+              private router:Router,
+              private storage:AngularFireStorage) {
 
   }
 
@@ -66,4 +69,34 @@ form = this.fb.group({
         .subscribe();
 
   }
+
+    uploadImage(uploadImage: any) {
+        const file:File = uploadImage.target.files[0];
+        console.log(file)
+
+      const filePAth = `courses/${this.courseID}/${file.name}`;
+      console.log(filePAth)
+
+        const task = this.storage.upload(filePAth ,file , {
+          cacheControl:"max-age=259000,public"
+        })
+
+      this.percentageChanges$ = task.percentageChanges();
+      task.snapshotChanges()
+          .pipe(
+              last(),
+              concatMap(()=>this.storage.ref(filePAth).getDownloadURL()),
+              tap(url => {
+                this.iconUrl = url
+                console.log(url)
+              } ),
+              catchError(err => {
+                console.log(err)
+                alert("could not create error ")
+                return throwError(err)
+              })
+          )
+          .subscribe()
+
+    }
 }
