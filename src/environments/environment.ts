@@ -15,7 +15,7 @@ export const environment = {
     measurementId: 'G-PE3W0L8YJP'
   },
   api: {
-
+    createUser:"http://localhost:5001/dazzling-kite-242522/us-central1/createuserapp"
   }
 };
 
